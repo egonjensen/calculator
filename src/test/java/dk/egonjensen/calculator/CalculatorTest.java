@@ -1,7 +1,7 @@
 package dk.egonjensen.calculator;
 
 import org.junit.Test;
-import static org.junit.Assert.assertEquala;
+import static org.junit.Assert.assertEquals;
 
 public class CalculatorTest {
 
