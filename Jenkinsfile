@@ -35,5 +35,36 @@ pipeline {
                 ])
             }
         }
+        stage('Package') {
+            steps {
+                sh './gradlew build'
+            }
+        }
+        stage('Docker build') {
+            steps {
+                sh 'docker build -t localhost:5000/calculator .'
+            }
+        }
+        stage('Docker push') {
+            steps {
+                sh 'docker push localhost:5000/calculator'
+            }
+        }
+        stage('Deploy to staging') {
+            steps {
+                sh 'docker run -d --rm -p 8765:8080 --name calculator localhost:5000/calculator'
+            }
+        }
+        stage('Acceptence test') {
+            steps {
+                sleep 60
+                sh './acceptence_test.sh'
+            }
+        }
+    }
+    post {
+        always {
+            sh 'docker stop calculator'
+        }
     }
 }
