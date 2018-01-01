@@ -53,12 +53,14 @@ pipeline {
                 sh 'docker push egonjensen/calculator'
             }
         }
+        /*
         stage('Deploy to staging') {
             steps {
                 // sh 'docker run -d --rm -p 8765:8080 --name calculator egonjensen/calculator'
                 // [1] sh 'docker-compose up -d'
             }
         }
+        */
         stage('Acceptence test') {
             steps {
                 // [1] sleep 60
