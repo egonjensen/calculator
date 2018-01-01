@@ -1,7 +1,7 @@
 pipeline {
     agent any
     triggers {
-        pollSCM('0 * * * *')
+        pollSCM('* * * * *')
     }
     stages {
         stage('Compile') {
@@ -55,19 +55,25 @@ pipeline {
         }
         stage('Deploy to staging') {
             steps {
-                sh 'docker run -d --rm -p 8765:8080 --name calculator egonjensen/calculator'
+                // sh 'docker run -d --rm -p 8765:8080 --name calculator egonjensen/calculator'
+                // [1] sh 'docker-compose up -d'
             }
         }
         stage('Acceptence test') {
             steps {
-                sleep 60
-                sh './acceptence_test.sh'
+                // [1] sleep 60
+                // [1] sh './acceptence_test.sh'
+                sh 'docker-compose -d docker-compose.yml -f acceptance/docker-compose-acceptance.yml build test'
+                sh 'docker-compose -d docker-compose.yml -f acceptance/docker-compose-acceptance.yml -p acceptance up -d'
+                sh 'test $(docker wait acceptance_test_1) -eq 0'
             }
         }
     }
     post {
         always {
-            sh 'docker stop calculator'
+            // sh 'docker stop calculator'
+            // [1] sh 'docker-compose down'
+            sh 'docker-compose -d docker-compose.yml -f acceptance/docker-compose-acceptance.yml -p acceptance down'
         }
     }
 }
